@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es-AR">
 <head>
 <meta charset="utf-8">
@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>ArcoLab v1.0</title>
+<title>ArcoLab v1.0.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap" rel="stylesheet">
@@ -324,6 +324,19 @@ button{font-family:inherit;cursor:pointer;transition:.12s ease}
 }
 .lib-block:hover{box-shadow:0 4px 12px rgba(15,23,42,.1);transform:translateY(-1px)}
 .lib-block:active{cursor:grabbing;opacity:.7}
+.lib-info-btn{
+  width:24px;height:24px;border-radius:50%;border:1px solid var(--line);
+  background:#fff;color:var(--brand);font-size:13px;font-weight:900;
+  display:grid;place-items:center;flex-shrink:0;cursor:pointer;
+}
+.lib-info-btn:hover{background:var(--softblue);border-color:#bfdbfe;transform:none;box-shadow:none}
+.exercise-sheet{display:grid;gap:14px}
+.exercise-sheet-section{border-top:1px solid var(--line);padding-top:12px}
+.exercise-sheet-section:first-child{border-top:none;padding-top:0}
+.exercise-sheet-section h3{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.exercise-sheet-section p,.exercise-sheet-section li{font-size:13px;line-height:1.55;color:#334155}
+.exercise-sheet-section ul,.exercise-sheet-section ol{padding-left:20px;display:grid;gap:5px}
+.exercise-sheet-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
 
 /* ── HOME DASHBOARD ────────────────────────────────── */
 .home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
@@ -443,7 +456,7 @@ button{font-family:inherit;cursor:pointer;transition:.12s ease}
 // ══════════════════════════════════════════════════════════
 // CONSTANTS
 // ══════════════════════════════════════════════════════════
-const APP_VERSION = 'arcolab-v1.0';
+const APP_VERSION = 'arcolab-v1.0.1';
 const CLIENT_ID   = '541443400570-oe8t3acuo2huil3lhoq9i1t8f26clg8l.apps.googleusercontent.com';
 const SCOPES      = 'https://www.googleapis.com/auth/drive.file openid profile email';
 const FOLDER_NAME = 'ArcoLab';
@@ -498,6 +511,153 @@ const LIB = [
   {id:'ind-pts',  nombre:'Indicador: puntaje',        categoria:'Indicadores', kind:'indicador',  dimension:'deportiva',   color:'#0891b2', descripcion:'Puntaje por ronda o rendimiento.'},
   {id:'libre',    nombre:'Rutina libre',              categoria:'Libre',       kind:'actividad',  dimension:'tecnica',     color:'#334155', descripcion:'Bloque editable.'},
 ];
+
+const LIB_INFO = {
+  'ps-rutina': {
+    objetivo:'Construir una secuencia mental breve y repetible que prepare cada flecha o tanda.',
+    ejecucion:['Adoptar la posición de espera y realizar una respiración lenta.','Definir una palabra clave vinculada con la acción principal de la flecha, por ejemplo “expansión” o “dirección”.','Visualizar brevemente la ejecución correcta.','Comenzar el tiro respetando siempre la misma secuencia.','Al finalizar, registrar si la rutina se cumplió, sin juzgar primero el resultado.'],
+    dosis:'5–10 minutos al inicio; luego aplicar la rutina durante 12–36 flechas.',
+    material:'Arco y planilla de registro; cronómetro opcional.',
+    errores:['Convertir la rutina en una lista demasiado larga.','Cambiar palabras clave a cada flecha.','Usarla solo cuando aparece un problema.'],
+    aplicacion:'Favorece consistencia atencional, control de activación y recuperación después de una mala flecha.',
+    seguridad:'No reemplaza la intervención profesional ante ansiedad intensa o persistente.'
+  },
+  'ps-viz': {
+    objetivo:'Ensayar mentalmente una ejecución eficaz antes de realizarla.',
+    ejecucion:['Ubicarse en una posición cómoda y sin interrupciones.','Respirar lentamente durante 30–60 segundos.','Imaginar el tiro desde una perspectiva interna: postura, tensión, dirección y suelta.','Incluir sensaciones corporales y el ritmo real de ejecución.','Realizar luego una serie corta y comparar lo imaginado con lo ejecutado.'],
+    dosis:'2–4 bloques de 3–5 repeticiones mentales.',
+    material:'Lugar tranquilo; audio guiado opcional.',
+    errores:['Imaginar solo el impacto y no el proceso.','Hacer escenas demasiado largas.','Practicar imágenes de errores repetidamente.'],
+    aplicacion:'Útil para consolidar cambios técnicos y preparar situaciones competitivas.',
+    seguridad:'Interrumpir si genera malestar significativo o mareos.'
+  },
+  'ps-pres': {
+    objetivo:'Practicar la toma de decisiones y la rutina de tiro bajo presión controlada.',
+    ejecucion:['Definir una tarea concreta y una consecuencia deportiva leve, por ejemplo alcanzar un puntaje o repetir una tanda.','Realizar la rutina completa antes de cada flecha.','Registrar puntaje y también cumplimiento del proceso.','Finalizar con una revisión breve: qué se mantuvo y qué se perdió.'],
+    dosis:'2–4 tandas o 12–30 flechas según nivel.',
+    material:'Blanco, planilla y marcador visible.',
+    errores:['Usar castigos físicos.','Aumentar la presión hasta deteriorar completamente la técnica.','Evaluar solo el puntaje.'],
+    aplicacion:'Mejora la transferencia del entrenamiento a la competencia.',
+    seguridad:'La presión debe ser proporcional al nivel y no humillante.'
+  },
+  'te-click': {
+    objetivo:'Coordinar transferencia, expansión y activación del clicker sin anticipar la suelta.',
+    ejecucion:['Trabajar inicialmente a corta distancia o sobre blanco grande.','Completar la apertura y estabilizar la alineación.','Mantener la dirección del codo y continuar la expansión mediante la espalda, sin empujar la mano hacia adelante.','Dejar que el clicker active la continuidad del tiro, no una reacción brusca.','Finalizar manteniendo dirección y postura.'],
+    dosis:'3–6 series de 6 flechas, priorizando calidad.',
+    material:'Arco recurvo con clicker; banda elástica para progresiones.',
+    errores:['Tirar del clicker con la mano.','Detener la expansión antes del clic.','Soltar voluntariamente al escuchar el clic.'],
+    aplicacion:'Mejora continuidad, sincronización y repetibilidad del disparo en recurvo.',
+    seguridad:'Ajustar previamente apertura y posición del clicker con un entrenador competente.'
+  },
+  'te-disp': {
+    objetivo:'Ejecutar una activación progresiva del disparador sin anticipar el momento exacto de la salida.',
+    ejecucion:['Trabajar cerca del blanco o con blanco ciego.','Colocar correctamente la mano en el disparador.','Llegar al anclaje y estabilizar la puntería.','Mantener tracción y dirección mientras aumenta gradualmente la activación.','Permitir que la salida ocurra como consecuencia del movimiento, sin golpear el gatillo.'],
+    dosis:'3–5 series de 6 flechas; detener al perder control.',
+    material:'Arco compuesto y disparador correctamente ajustado.',
+    errores:['Presionar bruscamente el gatillo.','Congelar la tracción al apuntar.','Aumentar demasiado la sensibilidad del disparador.'],
+    aplicacion:'Reduce anticipación, comando y ansiedad de disparo.',
+    seguridad:'Practicar primero con arco de entrenamiento o a distancia muy corta; verificar siempre el ajuste del disparador.'
+  },
+  'te-raso': {
+    objetivo:'Repetir con precisión el punto de anclaje, la posición facial y una suelta limpia en arco raso.',
+    ejecucion:['Elegir referencias táctiles estables en mano, rostro y cuerda.','Llegar al anclaje sin modificar la postura de cabeza.','Mantener tensión de espalda y dirección del codo.','Relajar progresivamente los dedos sin abrir la mano de forma activa.','Conservar la posición final para verificar el seguimiento.'],
+    dosis:'4–6 series de 6 flechas a distancia controlada.',
+    material:'Arco raso y blanco grande.',
+    errores:['Buscar el anclaje moviendo la cabeza.','Abrir activamente los dedos.','Perder tensión dorsal durante la puntería.'],
+    aplicacion:'Mejora consistencia vertical, salida de cuerda y agrupación.',
+    seguridad:'Reducir potencia o volumen ante dolor en dedos, codo u hombro.'
+  },
+  'te-blanco': {
+    objetivo:'Concentrar la atención en sensaciones y secuencia técnica sin interferencia del puntaje.',
+    ejecucion:['Ubicarse a distancia corta frente a un parapeto sin centro visible.','Elegir uno o dos focos técnicos, no más.','Realizar cada flecha con rutina completa.','Mantener la posición final y registrar sensaciones.','Trasladar luego el mismo foco a un blanco normal.'],
+    dosis:'12–30 flechas, seguidas por una transferencia breve a blanco.',
+    material:'Parapeto seguro sin diana o con centro cubierto.',
+    errores:['Tirar sin intención técnica.','Usar blanco ciego durante toda la sesión.','Introducir demasiados focos simultáneos.'],
+    aplicacion:'Facilita aprendizaje motor y recuperación de confianza.',
+    seguridad:'Confirmar que el parapeto y el área sean seguros aunque no exista referencia visual.'
+  },
+  'te-mano': {
+    objetivo:'Repetir el apoyo de la empuñadura y reducir el torque transmitido al arco.',
+    ejecucion:['Colocar la empuñadura sobre la zona carnosa del pulgar, evitando centrarla en la palma.','Mantener nudillos aproximadamente a 45 grados, según anatomía y técnica.','Relajar los dedos y usar dragonera.','Elevar el arco sin cambiar la presión de la mano.','Observar la reacción del arco después de la suelta.'],
+    dosis:'3–5 series de 6 flechas a corta o media distancia.',
+    material:'Arco, dragonera y cinta de referencia opcional.',
+    errores:['Cerrar la mano durante el disparo.','Cambiar la posición al apuntar.','Aplicar presión lateral con el pulgar.'],
+    aplicacion:'Disminuye variaciones laterales y mejora la reacción libre del arco.',
+    seguridad:'Usar siempre dragonera antes de relajar la mano.'
+  },
+  'fi-mov': {
+    objetivo:'Mejorar movilidad torácica y del complejo del hombro sin perder control escapular.',
+    ejecucion:['Realizar rotaciones torácicas en cuadrupedia o decúbito lateral.','Continuar con deslizamientos de brazos en pared dentro de un rango cómodo.','Agregar elevaciones controladas sin compensar con la zona lumbar.','Respirar de manera continua y lenta.'],
+    dosis:'2 series de 6–10 repeticiones por ejercicio.',
+    material:'Colchoneta y pared; banda elástica opcional.',
+    errores:['Forzar el rango.','Arquear la zona lumbar.','Elevar los hombros hacia las orejas.'],
+    aplicacion:'Facilita una posición estable de hombros, tórax y brazo de arco.',
+    seguridad:'No trabajar sobre dolor agudo; adaptar el rango ante lesiones previas.'
+  },
+  'fi-esc': {
+    objetivo:'Mejorar el control de la escápula y la estabilidad del hombro durante la elevación y el sostén.',
+    ejecucion:['Colocarse frente a una pared con antebrazos apoyados.','Presionar suavemente la pared sin elevar los hombros.','Deslizar los brazos hacia arriba permitiendo la rotación natural de las escápulas.','Mantener columna y pelvis neutras.','Regresar lentamente sin juntar excesivamente las escápulas.'],
+    dosis:'2–3 series de 8–12 repeticiones lentas.',
+    material:'Pared; banda alrededor de los antebrazos como progresión.',
+    errores:['Encoger los hombros.','Arquear la zona lumbar.','Despegar los antebrazos.','Apretar excesivamente las escápulas.'],
+    aplicacion:'Ayuda a organizar el hombro de arco y el hombro de cuerda con menor sobrecarga del trapecio superior.',
+    seguridad:'Detener ante dolor agudo, hormigueo o pérdida marcada de control.'
+  },
+  'fi-spt': {
+    objetivo:'Desarrollar resistencia específica para sostener la apertura y la alineación de tiro.',
+    ejecucion:['Realizar una entrada en calor completa.','Abrir el arco y alcanzar la posición técnica habitual.','Sostener sin ejecutar la suelta durante el tiempo pautado.','Bajar el arco de forma controlada y descansar.','Repetir conservando alineación y respiración.'],
+    dosis:'5–8 repeticiones de 10–20 segundos, con 40–60 segundos de pausa; ajustar al nivel.',
+    material:'Arco habitual o de menor potencia; cronómetro.',
+    errores:['Sostener hasta el fallo técnico.','Elevar el hombro de arco.','Perder postura lumbar o contener la respiración.'],
+    aplicacion:'Mejora tolerancia al sostén y estabilidad al final de competencias largas.',
+    seguridad:'No soltar en seco. Realizar siempre hacia un blanco seguro o bajar el arco controladamente.'
+  },
+  'fi-core': {
+    objetivo:'Aumentar la estabilidad lumbo-pélvica y resistir rotaciones no deseadas durante el tiro.',
+    ejecucion:['Colocarse de lado a una banda elástica anclada a la altura del pecho.','Tomar la banda con ambas manos frente al esternón.','Separar las manos del torso sin permitir que el tronco rote.','Mantener pelvis, costillas y cabeza alineadas.','Regresar lentamente.'],
+    dosis:'2–4 series de 8–12 repeticiones por lado o 15–30 segundos isométricos.',
+    material:'Banda elástica y punto de anclaje seguro.',
+    errores:['Rotar el tronco.','Arquear la espalda.','Usar una resistencia que impide respirar.'],
+    aplicacion:'Favorece una plataforma estable y reduce compensaciones en apertura y sostén.',
+    seguridad:'Asegurar el anclaje de la banda y evitar cargas que produzcan dolor lumbar.'
+  },
+  'de-sim': {
+    objetivo:'Reproducir las demandas físicas, técnicas y mentales de una ronda completa.',
+    ejecucion:['Definir modalidad, distancia, cantidad de flechas y pausas reglamentarias.','Preparar equipamiento como en competencia.','Realizar calentamiento y ronda completa sin modificar reglas.','Registrar puntaje, tiempos, RPE, dolor y cumplimiento de rutina.','Cerrar con una revisión breve y concreta.'],
+    dosis:'Una ronda de 72 flechas o versión reducida según etapa del plan.',
+    material:'Campo reglamentario, planilla o aplicación de tanteo y equipamiento completo.',
+    errores:['Hacer simulaciones completas demasiado seguido.','Interrumpir para corregir técnica en cada tanda.','Analizar solo el puntaje final.'],
+    aplicacion:'Permite verificar tolerancia de carga, estrategia y consistencia competitiva.',
+    seguridad:'Regular frecuencia y volumen según experiencia, fatiga y condición física.'
+  },
+  'de-match': {
+    objetivo:'Practicar decisiones, ritmo y recuperación emocional en formato de enfrentamiento.',
+    ejecucion:['Definir formato: sets, puntaje acumulado o desempate.','Asignar rival real o simulado.','Respetar tiempos y alternancia.','Registrar resultado y cumplimiento de rutina.','Repetir situaciones de cierre y desempate.'],
+    dosis:'2–5 enfrentamientos según modalidad y nivel.',
+    material:'Blanco, cronómetro, tanteador y oponente cuando sea posible.',
+    errores:['Convertir toda sesión en competencia.','Cambiar la técnica por el resultado inmediato.','No practicar desempates.'],
+    aplicacion:'Mejora adaptación táctica y control bajo presión directa.',
+    seguridad:'Mantener reglas de línea de tiro y comunicación entre participantes.'
+  },
+  'de-soc': {
+    objetivo:'Entrenar habilidades mediante cooperación, competencia moderada y variedad de consignas.',
+    ejecucion:['Formar equipos equilibrados.','Definir una consigna simple y puntuación visible.','Alternar roles y distancias cuando corresponda.','Mantener la rutina técnica dentro del juego.','Cerrar con una devolución breve sobre cooperación y ejecución.'],
+    dosis:'15–30 minutos dentro de la sesión.',
+    material:'Blancos, tarjetas de consignas y tanteador.',
+    errores:['Reglas demasiado complejas.','Premiar solo a los más fuertes.','Descuidar la seguridad por acelerar el juego.'],
+    aplicacion:'Aumenta adherencia, comunicación y práctica significativa en grupos.',
+    seguridad:'Las reglas lúdicas nunca modifican las normas de seguridad del campo.'
+  },
+  'libre': {
+    objetivo:'Crear una actividad personalizada cuando la biblioteca no contiene la tarea necesaria.',
+    ejecucion:['Definir un objetivo observable.','Escribir instrucciones breves y ordenadas.','Indicar volumen, intensidad o duración.','Agregar criterio de finalización y registro.'],
+    dosis:'A definir por el entrenador.',
+    material:'Según la actividad.',
+    errores:['Usar nombres ambiguos.','No especificar cómo se ejecuta o cómo se evalúa.'],
+    aplicacion:'Permite adaptar ArcoLab a necesidades particulares del atleta.',
+    seguridad:'Agregar siempre las precauciones específicas de la actividad.'
+  }
+};
 
 const DIC = {
   tiet:['TIET — Test Isométrico Específico de Tiro','Esfuerzo máximo controlado en tres repeticiones, en posición semejante al tiro. Busca un índice de la capacidad de fuerza específica en ese momento. No define por sí solo si el arquero está bien o mal. Se interpreta junto con dolor, fatiga, sueño, foco y carga planificada. Método: 1) calentar siempre igual; 2) posición de medición sin arco; 3) estabilizar mano del arco con la carga del protocolo; 4) traccionar contra dinamómetro o celda de carga; 5) tres intentos máximos de 3–5 segundos; 6) descansar 60–90 segundos entre intentos; 7) registrar la unidad: N, kgf o lbf; 8) cortar si aparece dolor agudo, pérdida de alineación, compensación lumbar, mareo o molestia anormal.'],
@@ -1363,6 +1523,8 @@ function renderEstructura(plan){
           <div style="display:flex;align-items:center;gap:6px">
             <span style="font-size:13px">${isEvent?'📅':'◉'}</span>
             <b style="font-size:12px;flex:1">${esc(l.nombre)}</b>
+            <button class="lib-info-btn" type="button" aria-label="Ver explicación de ${esc(l.nombre)}"
+              onclick="event.stopPropagation();showLibInfo('${l.id}')" draggable="false">i</button>
             <span style="font-size:10px;color:var(--muted)">${l.categoria}</span>
           </div>
           ${l.descripcion?`<div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3">${esc(l.descripcion.slice(0,60))}${l.descripcion.length>60?'…':''}</div>`:''}
@@ -1375,6 +1537,53 @@ function renderEstructura(plan){
         ${A.planDragTarget?`<span style="font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:8px;padding:4px 10px">📌 Destino: <b>${esc(A.planDragTarget.label)}</b> <button onclick="A.planDragTarget=null;render()" style="background:none;border:none;cursor:pointer;color:var(--muted)">✕</button></span>`:''}
       </div>
       ${renderCycleNode(plan.root, plan.id)}
+    </div>
+  </div>`;
+}
+
+function showLibInfo(libId){
+  const item = LIB.find(x=>x.id===libId); if(!item) return;
+  const f = LIB_INFO[libId];
+  const fallback = {
+    objetivo:item.descripcion || 'Elemento de planificación de ArcoLab.',
+    ejecucion:[item.kind==='indicador'
+      ? 'Incorporarlo al ciclo correspondiente y definir cómo, cuándo y con qué escala se registrará.'
+      : item.kind==='evento'
+        ? 'Ubicarlo en el calendario, asignar prioridad y organizar las cargas previas y posteriores.'
+        : 'Incorporarlo en la estructura del plan y completar sus datos según el objetivo del ciclo.'],
+    dosis:'No corresponde o debe definirse según el plan.',
+    material:'No especificado.',
+    errores:['Agregarlo sin un objetivo o criterio de uso claro.'],
+    aplicacion:'Organiza y documenta la planificación del entrenamiento.',
+    seguridad:'Aplicar los criterios de seguridad propios de las tareas asociadas.'
+  };
+  const x = f || fallback;
+  const list = arr => `<ol>${(arr||[]).map(v=>`<li>${esc(v)}</li>`).join('')}</ol>`;
+  document.getElementById('modalContainer').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="max-width:680px">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px">
+        <div style="width:12px;height:44px;border-radius:999px;background:${item.color||'#334155'};flex-shrink:0"></div>
+        <div style="flex:1">
+          <div class="exercise-sheet-meta">
+            <span class="chip">${esc(item.categoria)}</span>
+            ${item.dimension?`<span class="chip">${esc(DIMS[item.dimension]?.nombre||item.dimension)}</span>`:''}
+          </div>
+          <h2 style="margin:4px 0 2px">${esc(item.nombre)}</h2>
+          <div style="font-size:13px;color:var(--muted)">${esc(item.descripcion||'')}</div>
+        </div>
+        <button class="btn ghost sm" onclick="closeModal()" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="exercise-sheet">
+        <section class="exercise-sheet-section"><h3>Objetivo</h3><p>${esc(x.objetivo)}</p></section>
+        <section class="exercise-sheet-section"><h3>Cómo se realiza</h3>${list(x.ejecucion)}</section>
+        <section class="exercise-sheet-section"><h3>Dosificación orientativa</h3><p>${esc(x.dosis)}</p></section>
+        <section class="exercise-sheet-section"><h3>Material</h3><p>${esc(x.material)}</p></section>
+        <section class="exercise-sheet-section"><h3>Errores frecuentes</h3>${list(x.errores)}</section>
+        <section class="exercise-sheet-section"><h3>Aplicación al tiro con arco</h3><p>${esc(x.aplicacion)}</p></section>
+        <section class="exercise-sheet-section"><h3>Seguridad</h3><p>${esc(x.seguridad)}</p></section>
+      </div>
+      <div class="modal-footer"><button class="btn primary" onclick="closeModal()">Cerrar ficha</button></div>
     </div>
   </div>`;
 }
